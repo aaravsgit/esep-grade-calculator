@@ -1,8 +1,19 @@
 package esepunittests
 
 type GradeCalculator struct {
-	grades []Grade
+	grades      []Grade
+	gradingMode GradingMode
 }
+
+// GradingMode selects how GetFinalGrade reports the result.
+type GradingMode int
+
+const (
+	// LetterGrade reports A, B, C, D, or F. It is the default.
+	LetterGrade GradingMode = iota
+	// PassFail reports Pass for 70 or above and Fail below 70.
+	PassFail
+)
 
 type GradeType int
 
@@ -28,9 +39,18 @@ type Grade struct {
 	Type  GradeType
 }
 
-func NewGradeCalculator() *GradeCalculator {
+// NewGradeCalculator creates a calculator. Calling it with no arguments
+// keeps the original letter grade behavior. Passing a GradingMode
+// selects a different mode, for example NewGradeCalculator(PassFail).
+func NewGradeCalculator(mode ...GradingMode) *GradeCalculator {
+	gradingMode := LetterGrade
+	if len(mode) > 0 {
+		gradingMode = mode[0]
+	}
+
 	return &GradeCalculator{
-		grades: make([]Grade, 0),
+		grades:      make([]Grade, 0),
+		gradingMode: gradingMode,
 	}
 }
 
